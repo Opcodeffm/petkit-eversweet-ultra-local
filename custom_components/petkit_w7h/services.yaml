@@ -1,0 +1,34 @@
+invoke:
+  fields:
+    service:
+      required: true
+      example: start
+      selector:
+        text:
+    payload:
+      required: false
+      example: '{"start_action": 2}'
+      selector:
+        object:
+
+set_settings:
+  fields:
+    settings:
+      required: true
+      example: '{"volume": 5}'
+      selector:
+        object:
+
+ignore_drink:
+  fields:
+    event_id:
+      required: true
+      example: 4_12345678_1791612289
+      selector:
+        text:
+          multiple: true
+    ignore:
+      required: false
+      default: true
+      selector:
+        boolean:

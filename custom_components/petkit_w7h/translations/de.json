@@ -1,0 +1,615 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Eversweet Ultra einrichten",
+        "description": "Geräte-ID und Secret leer lassen: Dann gibt dir Home Assistant einen Befehl für den Brunnen, der beides überträgt und den Brunnen umstellt.",
+        "data": {
+          "public_host": "IP dieser Home Assistant (aus Sicht des Brunnens)",
+          "port": "Port",
+          "device_id": "Geräte-ID (dev_id, optional)",
+          "device_secret": "Geräte-Secret (dev_srt, optional)"
+        },
+        "data_description": {
+          "port": "Über diesen Port spricht der Brunnen mit Home Assistant (einfaches HTTP)."
+        }
+      }
+    },
+    "error": {
+      "invalid_id": "Die Geräte-ID muss eine Zahl sein",
+      "id_and_secret": "Bitte Geräte-ID und Secret beide eintragen oder beide leer lassen"
+    },
+    "abort": {
+      "already_configured": "Bereits eingerichtet"
+    },
+    "create_entry": {
+      "setup_command": "Fast fertig. Melde dich einmal per Telnet als root am Brunnen an und führe aus:\n\n`{command}`\n\nDen Befehl findest du auch in deinen Benachrichtigungen."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Optionen",
+        "description": "Tiererkennung: 3–6 Fotos vom Gesicht jedes Tiers (frontal, formatfüllend) nach Medien › Meine Medien › petkit_w7h › pets › <Name> hochladen. Sie werden quadratisch zugeschnitten und spätestens nach 10 Minuten an den Brunnen gegeben.",
+        "data": {
+          "pet_name": "Name(n) deiner Tiere, mit Komma getrennt",
+          "message_language": "Sprache der Trink-Meldungen",
+          "only_known": "Nur per Gesicht erkannte Trinkvorgänge zählen",
+          "clips": "Clips vom Brunnen empfangen",
+          "retention_days": "Clips von Trinkvorgängen aufbewahren (Tage)",
+          "retention_other_days": "Übrige Clips aufbewahren (Tage)",
+          "max_storage_gb": "Höchstens so viel Speicher für alle Clips (GB)"
+        },
+        "data_description": {
+          "only_known": "Aus (empfohlen): Jeder Trinkvorgang zählt, außer jemand hantiert gerade am Brunnen (Schale oder Tank raus/rein, Taste am Gerät). Bei nur einem Tier gehört ihm jeder Trinkvorgang. An: nur wenn der Brunnen das Gesicht erkannt hat.",
+          "retention_other_days": "Besuche ohne Trinken, aussortierte Trinkvorgänge, Spülen und Wasserwechsel.",
+          "max_storage_gb": "Wird es mehr, gehen zuerst die ältesten übrigen Clips, dann die ältesten Trinkvorgänge."
+        }
+      }
+    }
+  },
+  "selector": {
+    "message_language": {
+      "options": {
+        "de": "Deutsch",
+        "en": "English"
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "error": {
+        "name": "Fehler"
+      },
+      "last_pet_detected": {
+        "name": "Zuletzt Tier erkannt"
+      },
+      "last_drink": {
+        "name": "Zuletzt getrunken"
+      },
+      "last_pet_id": {
+        "name": "Zuletzt erkanntes Tier"
+      },
+      "last_drink_duration": {
+        "name": "Letzte Trinkdauer"
+      },
+      "clip_storage": {
+        "name": "Clip-Speicher"
+      },
+      "drink_log": {
+        "name": "Letzter Trinkvorgang"
+      },
+      "drinks_today": {
+        "name": "Trinkvorgänge heute"
+      },
+      "drink_time_today": {
+        "name": "Trinkzeit heute"
+      },
+      "work_process": {
+        "name": "Arbeitsschritt"
+      },
+      "work_reason": {
+        "name": "Arbeitsgrund"
+      },
+      "cube_days_left": {
+        "name": "Cube Resttage"
+      },
+      "heat_real_temp": {
+        "name": "Wassertemperatur"
+      },
+      "heat_left_time": {
+        "name": "Heizung Restzeit"
+      },
+      "heat_status_time": {
+        "name": "Zeit im Heizzustand"
+      },
+      "disinfect_time": {
+        "name": "Tiefenreinigung Dauer"
+      },
+      "wifi_rssi": {
+        "name": "WLAN-Signal"
+      },
+      "ip_address": {
+        "name": "IP-Adresse"
+      },
+      "cpu": {
+        "name": "CPU-Last"
+      },
+      "runtime": {
+        "name": "Laufzeit"
+      },
+      "reboot_reason": {
+        "name": "Neustartgrund"
+      },
+      "camera_status": {
+        "name": "Kamerastatus"
+      },
+      "heat_state": {
+        "name": "Heizungszustand"
+      },
+      "lift_valve_state": {
+        "name": "Hubventil-Zustand"
+      },
+      "pump_state": {
+        "name": "Pumpenzustand"
+      },
+      "water_pump_state": {
+        "name": "Wasserpumpen-Zustand"
+      },
+      "cwt_state": {
+        "name": "Frischwassertank",
+        "state": {
+          "ok": "OK",
+          "low": "Knapp (unter 500 ml)",
+          "empty": "Leer",
+          "removed": "Nicht eingesetzt",
+          "unknown": "Unbekannt"
+        }
+      },
+      "wt_state": {
+        "name": "Abwassertank",
+        "state": {
+          "ok": "OK",
+          "full": "Voll – bitte leeren",
+          "removed": "Nicht eingesetzt",
+          "unknown": "Unbekannt"
+        }
+      },
+      "add_water_state": {
+        "name": "Nachfüll-Zustand"
+      },
+      "flush_state": {
+        "name": "Spül-Zustand"
+      },
+      "lift_reset_state": {
+        "name": "Hub-Reset-Zustand"
+      },
+      "lift_live_state": {
+        "name": "Hub-Live-Zustand"
+      },
+      "disinfect_state": {
+        "name": "Tiefenreinigung-Zustand"
+      },
+      "stg_full_state": {
+        "name": "Schalen-Füllzustand"
+      },
+      "work_mode": {
+        "name": "Aktuelle Arbeit",
+        "state": {
+          "idle": "Bereit",
+          "flushing": "Spült",
+          "refilling": "Füllt nach",
+          "draining": "Lässt ab",
+          "deep_cleaning": "Tiefenreinigung"
+        }
+      }
+    },
+    "binary_sensor": {
+      "connected": {
+        "name": "Verbindung"
+      },
+      "drinking": {
+        "name": "Trinkt gerade"
+      },
+      "problem": {
+        "name": "Störung"
+      },
+      "clean_water_tank_installed": {
+        "name": "Frischwassertank eingesetzt"
+      },
+      "waste_tank_installed": {
+        "name": "Abwassertank eingesetzt"
+      },
+      "waste_tank_locked": {
+        "name": "Abwassertank Verriegelung"
+      },
+      "tray_installed": {
+        "name": "Wasserschale eingesetzt"
+      },
+      "heater_installed": {
+        "name": "Heizschale eingesetzt"
+      },
+      "add_water_frequent": {
+        "name": "Nachfüllen zu häufig"
+      },
+      "err_dc": {
+        "name": "Störung: Stromversorgung"
+      },
+      "err_mcu": {
+        "name": "Störung: Steuerplatine (MCU)"
+      },
+      "err_rtc": {
+        "name": "Störung: Uhr (RTC)"
+      },
+      "err_cameral": {
+        "name": "Störung: Kamera getrennt"
+      },
+      "err_camerae": {
+        "name": "Störung: Kamerafehler"
+      },
+      "err_taryd": {
+        "name": "Störung: Wasserschale nicht eingesetzt"
+      },
+      "err_taryl": {
+        "name": "Störung: Wasserschale: zu wenig Wasser"
+      },
+      "err_taryf": {
+        "name": "Störung: Wasserschale voll"
+      },
+      "err_taryo": {
+        "name": "Störung: Wasserschale (taryO)"
+      },
+      "err_ptcl": {
+        "name": "Störung: Heizung (ptcL)"
+      },
+      "err_ptcm": {
+        "name": "Störung: Heizung defekt"
+      },
+      "err_valvel": {
+        "name": "Störung: Hubventil (valveL)"
+      },
+      "err_valvee": {
+        "name": "Störung: Hubventil Fehler"
+      },
+      "err_valven": {
+        "name": "Störung: Hubventil (valveN)"
+      },
+      "err_cycl": {
+        "name": "Störung: Umwälzpumpe (cycL)"
+      },
+      "err_cycm": {
+        "name": "Störung: Umwälzpumpe defekt"
+      },
+      "err_repl": {
+        "name": "Störung: Nachfüllpumpe (repL)"
+      },
+      "err_repm": {
+        "name": "Störung: Nachfüllpumpe defekt"
+      }
+    },
+    "switch": {
+      "camera": {
+        "name": "Kamera"
+      },
+      "microphone": {
+        "name": "Mikrofon"
+      },
+      "night_vision": {
+        "name": "Nachtsicht"
+      },
+      "camera_light": {
+        "name": "Kamera-Kontrollleuchte"
+      },
+      "micro_light": {
+        "name": "Mikrofon-Kontrollleuchte"
+      },
+      "light_mode": {
+        "name": "Anzeigeleuchten"
+      },
+      "manual_lock": {
+        "name": "Tastensperre"
+      },
+      "add_water_switch": {
+        "name": "Automatisch nachfüllen"
+      },
+      "auto_water_change": {
+        "name": "Automatischer Wasserwechsel"
+      },
+      "auto_flush": {
+        "name": "Automatisches Spülen"
+      },
+      "heater_switch": {
+        "name": "Heizung"
+      },
+      "pet_detection": {
+        "name": "Tiererkennung"
+      },
+      "drink_detection": {
+        "name": "Trinkerkennung"
+      },
+      "vomit_detection": {
+        "name": "Erbrechen-Erkennung"
+      },
+      "move_detection": {
+        "name": "Bewegungserkennung"
+      },
+      "smart_frame": {
+        "name": "Tierverfolgung"
+      },
+      "sound_enable": {
+        "name": "Töne"
+      },
+      "system_sound_enable": {
+        "name": "Sprachansagen"
+      },
+      "voice": {
+        "name": "Stimme"
+      },
+      "disturb_mode": {
+        "name": "Nicht stören"
+      },
+      "tone_mode": {
+        "name": "Ruhezeit für Töne"
+      },
+      "wl_disturb_mode": {
+        "name": "Ruhezeit für Wasserstands-LEDs"
+      },
+      "aw_disturb_mode": {
+        "name": "Ruhezeit für Nachfüllen"
+      },
+      "clean_water_lack_light": {
+        "name": "LED: Frischwasser knapp"
+      },
+      "clean_water_empty_light": {
+        "name": "LED: Frischwasser leer"
+      },
+      "waste_water_full_light": {
+        "name": "LED: Abwasser voll"
+      },
+      "light_assist": {
+        "name": "Lichtunterstützung"
+      },
+      "wifi_light_assist": {
+        "name": "WLAN-Lichtunterstützung"
+      },
+      "timestamp_enable": {
+        "name": "Zeitstempel im Video"
+      },
+      "pre_live": {
+        "name": "Pre-Live"
+      },
+      "upload": {
+        "name": "Clips hochladen"
+      },
+      "log_upload": {
+        "name": "Log-Upload"
+      }
+    },
+    "number": {
+      "volume": {
+        "name": "Lautstärke"
+      },
+      "fountain_time": {
+        "name": "Pumpe läuft"
+      },
+      "sleep_time": {
+        "name": "Pumpe pausiert"
+      },
+      "water_change_cycle": {
+        "name": "Wasserwechsel alle"
+      },
+      "flush_cycle": {
+        "name": "Spülen alle"
+      },
+      "add_water_mode": {
+        "name": "Nachfüllmodus"
+      },
+      "target_temp": {
+        "name": "Zieltemperatur"
+      },
+      "move_sensitivity": {
+        "name": "Bewegungsempfindlichkeit"
+      },
+      "detect_interval": {
+        "name": "Erkennungsintervall"
+      },
+      "selected_sound": {
+        "name": "Gewählter Ton"
+      },
+      "cube_durability": {
+        "name": "Cube Haltbarkeit"
+      }
+    },
+    "time": {
+      "water_change_time": {
+        "name": "Wasserwechsel Uhrzeit"
+      },
+      "flush_time": {
+        "name": "Spülen Uhrzeit"
+      },
+      "disturb_start": {
+        "name": "Nicht stören Beginn"
+      },
+      "disturb_end": {
+        "name": "Nicht stören Ende"
+      },
+      "tone_start": {
+        "name": "Ruhezeit Töne Beginn"
+      },
+      "tone_end": {
+        "name": "Ruhezeit Töne Ende"
+      },
+      "wl_disturb_start": {
+        "name": "Ruhezeit Wasserstands-LEDs Beginn"
+      },
+      "wl_disturb_end": {
+        "name": "Ruhezeit Wasserstands-LEDs Ende"
+      },
+      "aw_disturb_start": {
+        "name": "Ruhezeit Nachfüllen Beginn"
+      },
+      "aw_disturb_end": {
+        "name": "Ruhezeit Nachfüllen Ende"
+      },
+      "light_start": {
+        "name": "Anzeigeleuchten Beginn"
+      },
+      "light_end": {
+        "name": "Anzeigeleuchten Ende"
+      },
+      "camera_start": {
+        "name": "Kamera Beginn"
+      },
+      "camera_end": {
+        "name": "Kamera Ende"
+      },
+      "light_assist_start": {
+        "name": "Lichtunterstützung Beginn"
+      },
+      "light_assist_end": {
+        "name": "Lichtunterstützung Ende"
+      }
+    },
+    "button": {
+      "refill": {
+        "name": "Nachfüllen"
+      },
+      "drain": {
+        "name": "Ablassen"
+      },
+      "drain_and_flush": {
+        "name": "Ablassen und spülen"
+      },
+      "deep_clean": {
+        "name": "Tiefenreinigung (kochendes Wasser)"
+      },
+      "stop": {
+        "name": "Stopp"
+      },
+      "continue": {
+        "name": "Fortsetzen"
+      },
+      "clear_cwt_light": {
+        "name": "Frischwasser-LED quittieren"
+      },
+      "add_water_reset": {
+        "name": "Nachfüll-Erinnerung zurücksetzen"
+      },
+      "cube_reset": {
+        "name": "Cube gewechselt"
+      },
+      "discern_refresh": {
+        "name": "Tierfotos neu laden"
+      },
+      "reset_cycle_pump": {
+        "name": "Umwälzpumpe zurücksetzen"
+      },
+      "reset_lift_valve": {
+        "name": "Hubventil zurücksetzen"
+      }
+    },
+    "image": {
+      "last_drink_image": {
+        "name": "Letztes Trinkbild"
+      }
+    },
+    "event": {
+      "event_pet": {
+        "name": "Haustier",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "pet_detected": "Tier erkannt",
+              "pet_identified": "Tier zugeordnet",
+              "drink_start": "Trinken begonnen",
+              "drink_over": "Trinken beendet"
+            }
+          }
+        }
+      },
+      "event_drink": {
+        "name": "Trinkvorgang",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "drink": "Getrunken",
+              "clip_ready": "Clip bereit"
+            }
+          }
+        }
+      },
+      "event_work": {
+        "name": "Wartung",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "work_start": "Arbeit gestartet",
+              "flush_over": "Spülen fertig",
+              "add_water_over": "Nachfüllen fertig"
+            }
+          }
+        }
+      },
+      "event_fault": {
+        "name": "Störungsmeldung",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "error_start": "Störung begonnen",
+              "error_over": "Störung behoben"
+            }
+          }
+        }
+      },
+      "event_other": {
+        "name": "Sonstiges Ereignis",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "other": "Sonstiges"
+            }
+          }
+        }
+      }
+    },
+    "select": {
+      "fountain_mode": {
+        "name": "Fließmodus",
+        "state": {
+          "off": "Aus",
+          "continuous": "Dauerlauf",
+          "interval": "Intervall (an/aus)",
+          "sensor": "Bewegungsaktiviert"
+        }
+      },
+      "flush_intensity": {
+        "name": "Spülintensität",
+        "state": {
+          "low": "Schwach",
+          "medium": "Mittel",
+          "high": "Stark"
+        }
+      }
+    }
+  },
+  "services": {
+    "invoke": {
+      "name": "Roh-Aktion senden",
+      "description": "Schickt eine rohe service_invoke an den Brunnen (für Fortgeschrittene).",
+      "fields": {
+        "service": {
+          "name": "Dienst",
+          "description": "z. B. start, stop, power, play_sound, privacy"
+        },
+        "payload": {
+          "name": "Parameter",
+          "description": "z. B. {\"start_action\": 2}"
+        }
+      }
+    },
+    "set_settings": {
+      "name": "Roh-Einstellungen setzen",
+      "description": "Schickt rohe Einstellungen (property_set) an den Brunnen (für Fortgeschrittene).",
+      "fields": {
+        "settings": {
+          "name": "Einstellungen",
+          "description": "z. B. {\"volume\": 5}"
+        }
+      }
+    },
+    "ignore_drink": {
+      "name": "Trinkvorgang aussortieren",
+      "description": "Nimmt Trinkvorgänge aus Statistik und Trink-Karte (z. B. Fehlalarme).",
+      "fields": {
+        "event_id": {
+          "name": "Event-ID",
+          "description": "ID des Trinkvorgangs (Attribut id), auch mehrere"
+        },
+        "ignore": {
+          "name": "Aussortieren",
+          "description": "Aus = Trinkvorgang wieder mitzählen"
+        }
+      }
+    }
+  }
+}

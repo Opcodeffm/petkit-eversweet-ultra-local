@@ -1,0 +1,615 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Set up Eversweet Ultra",
+        "description": "Leave device ID and secret empty: Home Assistant then gives you a one-line command for the fountain that transfers both and switches the fountain over.",
+        "data": {
+          "public_host": "IP of this Home Assistant (as seen by the fountain)",
+          "port": "Port",
+          "device_id": "Device ID (dev_id, optional)",
+          "device_secret": "Device secret (dev_srt, optional)"
+        },
+        "data_description": {
+          "port": "The fountain talks to Home Assistant on this port (plain HTTP)."
+        }
+      }
+    },
+    "error": {
+      "invalid_id": "Device ID must be a number",
+      "id_and_secret": "Enter both device ID and secret, or leave both empty"
+    },
+    "abort": {
+      "already_configured": "Already configured"
+    },
+    "create_entry": {
+      "setup_command": "Almost done. Log in to the fountain once via telnet as root and run:\n\n`{command}`\n\nYou will also find this command in your notifications."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Options",
+        "description": "Pet recognition: put 3–6 photos of each pet's face (frontal, filling the frame) into Media › My media › petkit_w7h › pets › <name>. They are cropped to a square and handed to the fountain within 10 minutes.",
+        "data": {
+          "pet_name": "Pet name(s), comma-separated",
+          "message_language": "Language of drink messages",
+          "only_known": "Only count drinks recognized by face",
+          "clips": "Receive clips from the fountain",
+          "retention_days": "Keep drink clips (days)",
+          "retention_other_days": "Keep other clips (days)",
+          "max_storage_gb": "Storage limit for all clips (GB)"
+        },
+        "data_description": {
+          "only_known": "Off (recommended): every drink counts unless someone is handling the fountain (tray or tank out/in, button on the device). With a single pet, every drink is attributed to it. On: only drinks where the fountain recognized the face.",
+          "retention_other_days": "Pet visits without drinking, removed drinks, flushing and water changes.",
+          "max_storage_gb": "Above this, the oldest other clips are deleted first, then the oldest drink clips."
+        }
+      }
+    }
+  },
+  "selector": {
+    "message_language": {
+      "options": {
+        "de": "Deutsch",
+        "en": "English"
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "error": {
+        "name": "Error"
+      },
+      "last_pet_detected": {
+        "name": "Last pet detected"
+      },
+      "last_drink": {
+        "name": "Last drink time"
+      },
+      "last_pet_id": {
+        "name": "Last identified pet"
+      },
+      "last_drink_duration": {
+        "name": "Last drink duration"
+      },
+      "clip_storage": {
+        "name": "Clip storage"
+      },
+      "drink_log": {
+        "name": "Last drink"
+      },
+      "drinks_today": {
+        "name": "Drinks today"
+      },
+      "drink_time_today": {
+        "name": "Drinking time today"
+      },
+      "work_process": {
+        "name": "Work process"
+      },
+      "work_reason": {
+        "name": "Work reason"
+      },
+      "cube_days_left": {
+        "name": "Cube days left"
+      },
+      "heat_real_temp": {
+        "name": "Water temperature"
+      },
+      "heat_left_time": {
+        "name": "Heating time left"
+      },
+      "heat_status_time": {
+        "name": "Time in heating state"
+      },
+      "disinfect_time": {
+        "name": "Deep clean time"
+      },
+      "wifi_rssi": {
+        "name": "WiFi signal"
+      },
+      "ip_address": {
+        "name": "IP address"
+      },
+      "cpu": {
+        "name": "CPU load"
+      },
+      "runtime": {
+        "name": "Uptime"
+      },
+      "reboot_reason": {
+        "name": "Reboot reason"
+      },
+      "camera_status": {
+        "name": "Camera status"
+      },
+      "heat_state": {
+        "name": "Heater state"
+      },
+      "lift_valve_state": {
+        "name": "Lift valve state"
+      },
+      "pump_state": {
+        "name": "Pump state"
+      },
+      "water_pump_state": {
+        "name": "Water pump state"
+      },
+      "cwt_state": {
+        "name": "Clean water tank",
+        "state": {
+          "ok": "OK",
+          "low": "Low (below 500 ml)",
+          "empty": "Empty",
+          "removed": "Not inserted",
+          "unknown": "Unknown"
+        }
+      },
+      "wt_state": {
+        "name": "Waste water tank",
+        "state": {
+          "ok": "OK",
+          "full": "Full – please empty",
+          "removed": "Not inserted",
+          "unknown": "Unknown"
+        }
+      },
+      "add_water_state": {
+        "name": "Refill state"
+      },
+      "flush_state": {
+        "name": "Flush state"
+      },
+      "lift_reset_state": {
+        "name": "Lift reset state"
+      },
+      "lift_live_state": {
+        "name": "Lift live state"
+      },
+      "disinfect_state": {
+        "name": "Deep clean state"
+      },
+      "stg_full_state": {
+        "name": "Tray fill state"
+      },
+      "work_mode": {
+        "name": "Current task",
+        "state": {
+          "idle": "Idle",
+          "flushing": "Flushing",
+          "refilling": "Refilling",
+          "draining": "Draining",
+          "deep_cleaning": "Deep cleaning"
+        }
+      }
+    },
+    "binary_sensor": {
+      "connected": {
+        "name": "Connection"
+      },
+      "drinking": {
+        "name": "Drinking"
+      },
+      "problem": {
+        "name": "Problem"
+      },
+      "clean_water_tank_installed": {
+        "name": "Clean water tank inserted"
+      },
+      "waste_tank_installed": {
+        "name": "Waste water tank inserted"
+      },
+      "waste_tank_locked": {
+        "name": "Waste water tank lock"
+      },
+      "tray_installed": {
+        "name": "Water tray inserted"
+      },
+      "heater_installed": {
+        "name": "Heated tray inserted"
+      },
+      "add_water_frequent": {
+        "name": "Refill too frequent"
+      },
+      "err_dc": {
+        "name": "Fault: Power supply"
+      },
+      "err_mcu": {
+        "name": "Fault: Controller board (MCU)"
+      },
+      "err_rtc": {
+        "name": "Fault: Clock (RTC)"
+      },
+      "err_cameral": {
+        "name": "Fault: Camera disconnected"
+      },
+      "err_camerae": {
+        "name": "Fault: Camera error"
+      },
+      "err_taryd": {
+        "name": "Fault: Water tray not inserted"
+      },
+      "err_taryl": {
+        "name": "Fault: Water tray: water low"
+      },
+      "err_taryf": {
+        "name": "Fault: Water tray full"
+      },
+      "err_taryo": {
+        "name": "Fault: Water tray (taryO)"
+      },
+      "err_ptcl": {
+        "name": "Fault: Heater (ptcL)"
+      },
+      "err_ptcm": {
+        "name": "Fault: Heater malfunction"
+      },
+      "err_valvel": {
+        "name": "Fault: Lift valve (valveL)"
+      },
+      "err_valvee": {
+        "name": "Fault: Lift valve error"
+      },
+      "err_valven": {
+        "name": "Fault: Lift valve (valveN)"
+      },
+      "err_cycl": {
+        "name": "Fault: Circulation pump (cycL)"
+      },
+      "err_cycm": {
+        "name": "Fault: Circulation pump malfunction"
+      },
+      "err_repl": {
+        "name": "Fault: Refill pump (repL)"
+      },
+      "err_repm": {
+        "name": "Fault: Refill pump malfunction"
+      }
+    },
+    "switch": {
+      "camera": {
+        "name": "Camera"
+      },
+      "microphone": {
+        "name": "Microphone"
+      },
+      "night_vision": {
+        "name": "Night vision"
+      },
+      "camera_light": {
+        "name": "Camera indicator light"
+      },
+      "micro_light": {
+        "name": "Microphone indicator light"
+      },
+      "light_mode": {
+        "name": "Indicator lights"
+      },
+      "manual_lock": {
+        "name": "Child lock"
+      },
+      "add_water_switch": {
+        "name": "Auto refill"
+      },
+      "auto_water_change": {
+        "name": "Auto drain & refill"
+      },
+      "auto_flush": {
+        "name": "Auto drain & flush"
+      },
+      "heater_switch": {
+        "name": "Heater"
+      },
+      "pet_detection": {
+        "name": "Pet detection"
+      },
+      "drink_detection": {
+        "name": "Drink detection"
+      },
+      "vomit_detection": {
+        "name": "Vomit detection"
+      },
+      "move_detection": {
+        "name": "Motion detection"
+      },
+      "smart_frame": {
+        "name": "Pet tracking"
+      },
+      "sound_enable": {
+        "name": "Sounds"
+      },
+      "system_sound_enable": {
+        "name": "Voice prompts"
+      },
+      "voice": {
+        "name": "Voice"
+      },
+      "disturb_mode": {
+        "name": "Do not disturb"
+      },
+      "tone_mode": {
+        "name": "Quiet hours for tones"
+      },
+      "wl_disturb_mode": {
+        "name": "Quiet hours for water level lights"
+      },
+      "aw_disturb_mode": {
+        "name": "Quiet hours for refill"
+      },
+      "clean_water_lack_light": {
+        "name": "Light: clean water low"
+      },
+      "clean_water_empty_light": {
+        "name": "Light: clean water empty"
+      },
+      "waste_water_full_light": {
+        "name": "Light: waste water full"
+      },
+      "light_assist": {
+        "name": "Light assist"
+      },
+      "wifi_light_assist": {
+        "name": "WiFi light assist"
+      },
+      "timestamp_enable": {
+        "name": "Video timestamp"
+      },
+      "pre_live": {
+        "name": "Pre-live"
+      },
+      "upload": {
+        "name": "Clip upload"
+      },
+      "log_upload": {
+        "name": "Log upload"
+      }
+    },
+    "number": {
+      "volume": {
+        "name": "Volume"
+      },
+      "fountain_time": {
+        "name": "Flow run time"
+      },
+      "sleep_time": {
+        "name": "Flow pause time"
+      },
+      "water_change_cycle": {
+        "name": "Drain & refill cycle"
+      },
+      "flush_cycle": {
+        "name": "Drain & flush cycle"
+      },
+      "add_water_mode": {
+        "name": "Refill mode"
+      },
+      "target_temp": {
+        "name": "Target temperature"
+      },
+      "move_sensitivity": {
+        "name": "Motion sensitivity"
+      },
+      "detect_interval": {
+        "name": "Detection interval"
+      },
+      "selected_sound": {
+        "name": "Selected sound"
+      },
+      "cube_durability": {
+        "name": "Cube lifetime"
+      }
+    },
+    "time": {
+      "water_change_time": {
+        "name": "Drain & refill time"
+      },
+      "flush_time": {
+        "name": "Drain & flush time"
+      },
+      "disturb_start": {
+        "name": "Do not disturb start"
+      },
+      "disturb_end": {
+        "name": "Do not disturb end"
+      },
+      "tone_start": {
+        "name": "Tone quiet hours start"
+      },
+      "tone_end": {
+        "name": "Tone quiet hours end"
+      },
+      "wl_disturb_start": {
+        "name": "Water level light quiet hours start"
+      },
+      "wl_disturb_end": {
+        "name": "Water level light quiet hours end"
+      },
+      "aw_disturb_start": {
+        "name": "Refill quiet hours start"
+      },
+      "aw_disturb_end": {
+        "name": "Refill quiet hours end"
+      },
+      "light_start": {
+        "name": "Indicator lights start"
+      },
+      "light_end": {
+        "name": "Indicator lights end"
+      },
+      "camera_start": {
+        "name": "Camera start"
+      },
+      "camera_end": {
+        "name": "Camera end"
+      },
+      "light_assist_start": {
+        "name": "Light assist start"
+      },
+      "light_assist_end": {
+        "name": "Light assist end"
+      }
+    },
+    "button": {
+      "refill": {
+        "name": "Refill"
+      },
+      "drain": {
+        "name": "Drain"
+      },
+      "drain_and_flush": {
+        "name": "Drain & flush"
+      },
+      "deep_clean": {
+        "name": "Deep clean (boiling water)"
+      },
+      "stop": {
+        "name": "Stop"
+      },
+      "continue": {
+        "name": "Continue"
+      },
+      "clear_cwt_light": {
+        "name": "Acknowledge clean water light"
+      },
+      "add_water_reset": {
+        "name": "Reset refill reminder"
+      },
+      "cube_reset": {
+        "name": "Cube replaced"
+      },
+      "discern_refresh": {
+        "name": "Reload pet photos"
+      },
+      "reset_cycle_pump": {
+        "name": "Reset circulation pump"
+      },
+      "reset_lift_valve": {
+        "name": "Reset lift valve"
+      }
+    },
+    "image": {
+      "last_drink_image": {
+        "name": "Last drink image"
+      }
+    },
+    "event": {
+      "event_pet": {
+        "name": "Pet",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "pet_detected": "Pet detected",
+              "pet_identified": "Pet identified",
+              "drink_start": "Drinking started",
+              "drink_over": "Drinking finished"
+            }
+          }
+        }
+      },
+      "event_drink": {
+        "name": "Drink",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "drink": "Drank",
+              "clip_ready": "Clip ready"
+            }
+          }
+        }
+      },
+      "event_work": {
+        "name": "Maintenance",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "work_start": "Task started",
+              "flush_over": "Flush finished",
+              "add_water_over": "Refill finished"
+            }
+          }
+        }
+      },
+      "event_fault": {
+        "name": "Fault",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "error_start": "Fault started",
+              "error_over": "Fault cleared"
+            }
+          }
+        }
+      },
+      "event_other": {
+        "name": "Other event",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "other": "Other"
+            }
+          }
+        }
+      }
+    },
+    "select": {
+      "fountain_mode": {
+        "name": "Flow mode",
+        "state": {
+          "off": "Off",
+          "continuous": "Continuous",
+          "interval": "Intermittent (on/off)",
+          "sensor": "Motion-activated"
+        }
+      },
+      "flush_intensity": {
+        "name": "Flush intensity",
+        "state": {
+          "low": "Low",
+          "medium": "Medium",
+          "high": "High"
+        }
+      }
+    }
+  },
+  "services": {
+    "invoke": {
+      "name": "Send raw action",
+      "description": "Sends a raw service_invoke to the fountain (advanced).",
+      "fields": {
+        "service": {
+          "name": "Service",
+          "description": "e.g. start, stop, power, play_sound, privacy"
+        },
+        "payload": {
+          "name": "Payload",
+          "description": "e.g. {\"start_action\": 2}"
+        }
+      }
+    },
+    "set_settings": {
+      "name": "Set raw settings",
+      "description": "Sends raw settings (property_set) to the fountain (advanced).",
+      "fields": {
+        "settings": {
+          "name": "Settings",
+          "description": "e.g. {\"volume\": 5}"
+        }
+      }
+    },
+    "ignore_drink": {
+      "name": "Ignore drink",
+      "description": "Removes drinks from statistics and the drink card (e.g. false alarms).",
+      "fields": {
+        "event_id": {
+          "name": "Event ID",
+          "description": "ID of the drink event (attribute id), several allowed"
+        },
+        "ignore": {
+          "name": "Ignore",
+          "description": "Off = count the drink again"
+        }
+      }
+    }
+  }
+}
