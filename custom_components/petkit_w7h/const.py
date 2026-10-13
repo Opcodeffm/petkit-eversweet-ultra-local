@@ -34,7 +34,7 @@ EVENT_BUS = f"{DOMAIN}_event"
 EVENT_DRINK = f"{DOMAIN}_drink"  # Trinkvorgang beendet
 EVENT_CLIP = f"{DOMAIN}_clip"    # Clip liegt bereit
 
-PLATFORMS = ["binary_sensor", "button", "event", "image", "number", "select", "sensor", "switch", "time"]
+PLATFORMS = ["binary_sensor", "button", "camera", "event", "image", "number", "select", "sensor", "switch", "time"]
 
 # Clips: Ablage unter <media>/petkit_w7h, ausgeliefert über diese URLs
 MEDIA_SUBDIR = "petkit_w7h"

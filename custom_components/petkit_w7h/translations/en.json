@@ -488,6 +488,11 @@
         "name": "Reset lift valve"
       }
     },
+    "camera": {
+      "live": {
+        "name": "Live view"
+      }
+    },
     "image": {
       "last_drink_image": {
         "name": "Last drink image"

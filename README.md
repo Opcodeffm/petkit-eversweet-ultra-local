@@ -111,6 +111,16 @@ every drink is attributed to it even when the face is not recognized.
 | Keep other clips | 3 days | pet visits without drinking, flushing, water changes, removed drinks |
 | Storage limit | 5 GB | above it the oldest other clips go first, then the oldest drink clips |
 
+### Live view (experimental)
+
+The fountain has no local live stream in normal operation; the Petkit app streams via the
+Agora cloud. The firmware does contain a test program from production (`/app/bin/tserver`)
+that serves the camera as HTTP-FLV (1080p, 25 fps, with sound) on port 80 when started.
+The integration has a camera entity for it. It is disabled by default and only becomes
+available while `tserver` runs on the fountain. Note: `tserver` has no password, anyone in
+your network can open the stream. Starting it automatically is not part of the setup
+script yet.
+
 ### Events and services
 
 - `petkit_w7h_drink`: a counted drink (pet, duration, message, clip URL).
@@ -131,8 +141,8 @@ state and event reports, settings), emulates the object storage the fountain upl
 clips to, and serves the reference photos for pet recognition. Details:
 [docs/PROTOCOL.de.md](docs/PROTOCOL.de.md) (German).
 
-Firmware updates are not offered while the fountain runs locally. The camera live view
-(Agora) is not supported.
+Firmware updates are not offered while the fountain runs locally. The live view of the
+Petkit app (Agora) is not available locally, see "Live view" above.
 
 ## Credits
 

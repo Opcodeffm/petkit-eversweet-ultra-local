@@ -488,6 +488,11 @@
         "name": "Hubventil zurücksetzen"
       }
     },
+    "camera": {
+      "live": {
+        "name": "Livebild"
+      }
+    },
     "image": {
       "last_drink_image": {
         "name": "Letztes Trinkbild"

@@ -54,6 +54,8 @@ class W7HRuntime:
     server: W7HServer
     media: W7HMedia
     pets: W7HPets
+    # Entities erst, wenn der Brunnen registriert ist (sonst entstünden sie mit Geräte-ID 0)
+    platforms_loaded: bool = False
 
 
 type W7HConfigEntry = ConfigEntry[W7HRuntime]
@@ -87,10 +89,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: W7HConfigEntry) -> bool:
     server = W7HServer(device, int(data[CONF_PORT]), f"{base}/6/", media, pets, onboarding)
     await server.async_start()
     onboarding.async_update_notification()
-    entry.runtime_data = W7HRuntime(device, server, media, pets)
+    entry.runtime_data = W7HRuntime(device, server, media, pets, platforms_loaded=not onboarding.pending)
 
     await _async_setup_frontend(hass)
-    await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+    if entry.runtime_data.platforms_loaded:
+        await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     _register_services(hass)
 
     drink_days = int(options.get(CONF_RETENTION_DAYS, DEFAULT_RETENTION_DAYS))
@@ -120,7 +123,9 @@ async def _async_options_updated(hass: HomeAssistant, entry: W7HConfigEntry) -> 
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: W7HConfigEntry) -> bool:
-    ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
+    ok = True
+    if entry.runtime_data.platforms_loaded:
+        ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
     if ok:
         await entry.runtime_data.server.async_stop()
         await entry.runtime_data.device.async_unload()
