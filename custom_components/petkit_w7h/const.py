@@ -99,7 +99,7 @@ ERROR_TEXT: dict[str, tuple[str, str]] = {
     "cycM": ("Umwälzpumpe defekt", "Circulation pump malfunction"),
     "repL": ("Nachfüllpumpe (repL)", "Refill pump (repL)"),
     "repM": ("Nachfüllpumpe defekt", "Refill pump malfunction"),
-    "tankCU": ("Frischwassertank entnommen", "Clean water tank removed"),
+    "tankCU": ("Frischwassertank (tankCU)", "Clean water tank (tankCU)"),
     "tankDU": ("Abwassertank entnommen", "Waste water tank removed"),
     "tankCL": ("Frischwasser knapp", "Clean water low"),
     "tankDF": ("Abwassertank voll", "Waste water tank full"),
@@ -107,5 +107,5 @@ ERROR_TEXT: dict[str, tuple[str, str]] = {
 }
 
 # Tank-Zustände als Klartext (Optionen der Enum-Sensoren)
-CLEAN_TANK_STATES = ["ok", "low", "empty", "removed", "unknown"]
+CLEAN_TANK_STATES = ["ok", "low", "empty", "unknown"]
 WASTE_TANK_STATES = ["ok", "full", "removed", "unknown"]

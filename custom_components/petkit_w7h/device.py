@@ -60,6 +60,7 @@ MANUAL_REASON_MIN = 2
 WORK_COMMANDS = frozenset({"start", "stop", "continue", "end"})
 COMMAND_GRACE_S = 60
 HANDLING_LOG_MAX = 50
+TANK_LOG_MAX = 50
 
 
 def _int(value: Any) -> int | None:
@@ -200,6 +201,8 @@ class W7HDevice:
             if key in state and state[key] != self.state.get(key):
                 _LOGGER.info("%s: %s -> %s (Störungen: %s)", key, self.state.get(key), state[key],
                              ", ".join(self.active_errors) or "keine")
+                if self.state.get(key) is not None:  # erster Zustand nach dem Start ist kein Wechsel
+                    self._note_tank_change(key, self.state.get(key), state)
         for key in HANDLING_STATE_KEYS:
             old = self.state.get(key)
             if key in state and old is not None and state[key] != old:
@@ -276,6 +279,57 @@ class W7HDevice:
         der Brunnen meldet „Trinken“, sobald irgendwo ein Tier oder ein Bein im Bild ist."""
         err = state.get("err") if isinstance(state.get("err"), dict) else {}
         return state.get("stgInstall") == 0 or bool(err.get("taryD"))
+
+    def _note_tank_change(self, key: str, old: Any, state: dict[str, Any]) -> None:
+        """Wechsel der Tank-Codes festhalten (Belege für knapp/leer/voll), mit Hall-Werten."""
+        hall = state.get("sensor") if isinstance(state.get("sensor"), dict) else {}
+        log = list(self.local.get("tank_log") or [])
+        log.append([int(time.time()), key, old, state[key], {k: v for k, v in hall.items() if k.startswith("hall_")}])
+        self.local["tank_log"] = log[-TANK_LOG_MAX:]
+        self._schedule_save()
+
+    def clean_tank_status(self) -> str | None:
+        """Frischwassertank: ok/low/empty. cwtState 0 = ok ist belegt, 1/2 für knapp/leer sind
+        erschlossen (Wechsel stehen in local["tank_log"]). Ob der Tank eingesetzt ist, erkennt der
+        W7H nicht: Abnehmen ändert weder cwtInstall noch löst es eine Störung aus."""
+        st = self.state
+        if "cwtState" not in st:
+            return None
+        errors = self.active_errors
+        code = st.get("cwtState")
+        if code == 2:
+            return "empty"
+        if code == 1 or "tankCL" in errors:
+            return "low"
+        if code == 0:
+            return "ok"
+        return "unknown"
+
+    def waste_tank_status(self) -> str | None:
+        """Abwassertank: wtState 0 = nicht eingesetzt, 1 = ok, 2 = voll (belegt)."""
+        st = self.state
+        if "wtInstall" not in st and "wtState" not in st:
+            return None
+        errors = self.active_errors
+        if st.get("wtInstall") == 0 or "tankDU" in errors:
+            return "removed"
+        code = st.get("wtState")
+        if code == 2 or "tankDF" in errors:
+            return "full"
+        if code == 1:
+            return "ok"
+        return "unknown"
+
+    def tank_log(self, key: str, count: int = 5) -> list[str]:
+        """Letzte Wechsel eines Tank-Codes als kurze Texte, neueste zuerst."""
+        out = []
+        for ts, k, old, new, _hall in reversed(self.local.get("tank_log") or []):
+            if k == key and old is not None:
+                when = dt_util.as_local(dt_util.utc_from_timestamp(ts)).strftime("%d.%m. %H:%M")
+                out.append(f"{when}: {old} → {new}")
+            if len(out) >= count:
+                break
+        return out
 
     @callback
     def _note_handling(self, why: str) -> None:

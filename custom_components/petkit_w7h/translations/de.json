@@ -142,7 +142,6 @@
           "ok": "OK",
           "low": "Knapp (unter 500 ml)",
           "empty": "Leer",
-          "removed": "Nicht eingesetzt",
           "unknown": "Unbekannt"
         }
       },
@@ -193,9 +192,6 @@
       },
       "problem": {
         "name": "Störung"
-      },
-      "clean_water_tank_installed": {
-        "name": "Frischwassertank eingesetzt"
       },
       "waste_tank_installed": {
         "name": "Abwassertank eingesetzt"
@@ -265,6 +261,27 @@
       },
       "err_repm": {
         "name": "Störung: Nachfüllpumpe defekt"
+      },
+      "waste_tank_full": {
+        "name": "Abwassertank voll",
+        "state": {
+          "on": "Voll – bitte leeren",
+          "off": "OK"
+        }
+      },
+      "clean_water_low": {
+        "name": "Frischwasser knapp",
+        "state": {
+          "on": "Knapp – bitte nachfüllen",
+          "off": "OK"
+        }
+      },
+      "clean_water_empty": {
+        "name": "Frischwassertank leer",
+        "state": {
+          "on": "Leer",
+          "off": "OK"
+        }
       }
     },
     "switch": {

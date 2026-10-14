@@ -21,7 +21,10 @@ plain HTTP to a small server inside this integration.
 - **False alarms filtered:** drinks detected while someone is handling the fountain
   (tray or tank out/in, buttons pressed) are ignored automatically.
 - **Status in plain text:** clean and waste water tank, errors, current task, cube
-  (filter) days left, water temperature with the heated tray.
+  (filter) days left, water temperature with the heated tray. Separate sensors for
+  "waste water tank full", "clean water low" and "clean water tank empty" make
+  automations easy. (The W7H itself cannot tell whether the clean water tank is in
+  place, only the waste water tank and the tray.)
 - **Control:** refill, drain, drain & flush, deep clean, flow mode, schedules, quiet
   hours, lights, camera, detection settings and more (over 100 entities).
 

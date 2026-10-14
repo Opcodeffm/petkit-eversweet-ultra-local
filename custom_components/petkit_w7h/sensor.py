@@ -50,41 +50,6 @@ def _errors(dev: W7HDevice) -> str | None:
     return "Keine Störung" if dev.message_language == "de" else "No fault"
 
 
-def _clean_tank(dev: W7HDevice) -> str | None:
-    """Frischwassertank. cwtState 0 = ok ist belegt; 1/2 für knapp/leer sind erschlossen
-    (die Integration loggt jeden Wechsel), Störungs-Events haben Vorrang."""
-    st = dev.state
-    if "cwtInstall" not in st and "cwtState" not in st:
-        return None
-    errors = dev.active_errors
-    if st.get("cwtInstall") == 0 or "tankCU" in errors:
-        return "removed"
-    code = st.get("cwtState")
-    if code == 2:
-        return "empty"
-    if code == 1 or "tankCL" in errors:
-        return "low"
-    if code == 0:
-        return "ok"
-    return "unknown"
-
-
-def _waste_tank(dev: W7HDevice) -> str | None:
-    """Abwassertank: wtState 0 = nicht eingesetzt, 1 = ok, 2 = voll (belegt)."""
-    st = dev.state
-    if "wtInstall" not in st and "wtState" not in st:
-        return None
-    errors = dev.active_errors
-    if st.get("wtInstall") == 0 or "tankDU" in errors:
-        return "removed"
-    code = st.get("wtState")
-    if code == 2 or "tankDF" in errors:
-        return "full"
-    if code == 1:
-        return "ok"
-    return "unknown"
-
-
 def _cube_days_left(dev: W7HDevice) -> int | None:
     reset_at = dev.local.get("cube_reset_at")
     if not reset_at:
@@ -112,11 +77,11 @@ SENSORS: tuple[W7HSensorDescription, ...] = (
     # Gleiche Schlüssel wie früher die Rohcodes, damit die Entity-IDs bleiben.
     W7HSensorDescription(
         key="cwt_state", device_class=SensorDeviceClass.ENUM, options=CLEAN_TANK_STATES,
-        value_fn=_clean_tank, icon="mdi:cup-water",
+        value_fn=lambda d: d.clean_tank_status(), icon="mdi:cup-water",
     ),
     W7HSensorDescription(
         key="wt_state", device_class=SensorDeviceClass.ENUM, options=WASTE_TANK_STATES,
-        value_fn=_waste_tank, icon="mdi:delete-variant",
+        value_fn=lambda d: d.waste_tank_status(), icon="mdi:delete-variant",
     ),
     W7HSensorDescription(
         key="last_pet_detected", device_class=SensorDeviceClass.TIMESTAMP,
@@ -241,10 +206,16 @@ class W7HSensor(W7HEntity, SensorEntity):
         if key == "error":
             err = st.get("err") if isinstance(st.get("err"), dict) else {}
             return {"codes": [c for c, on in err.items() if on] + self.device.active_errors}
+        # Rohwerte der Hall-Sensoren (Diagnose; Bedeutung teils noch offen)
+        hall = st.get("sensor") if isinstance(st.get("sensor"), dict) else {}
         if key == "cwt_state":
-            return {"code": st.get("cwtState"), "installed": st.get("cwtInstall")}
+            return {"code": st.get("cwtState"), "changes": self.device.tank_log("cwtState"),
+                    **{k: hall[k] for k in ("hall_CH", "hall_CL", "hall_CKL", "hall_CKR") if k in hall}}
         if key == "wt_state":
-            return {"code": st.get("wtState"), "installed": st.get("wtInstall"), "locked": st.get("wtLock")}
+            return {"code": st.get("wtState"), "installed": st.get("wtInstall"), "locked": st.get("wtLock"),
+                    "changes": self.device.tank_log("wtState"),
+                    **{k: hall[k] for k in ("hall_DH", "hall_DKL", "hall_DKR", "hall_TY", "hall_LTU", "hall_LTD")
+                       if k in hall}}
         return None
 
 

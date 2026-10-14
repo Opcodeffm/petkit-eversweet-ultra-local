@@ -142,7 +142,6 @@
           "ok": "OK",
           "low": "Low (below 500 ml)",
           "empty": "Empty",
-          "removed": "Not inserted",
           "unknown": "Unknown"
         }
       },
@@ -193,9 +192,6 @@
       },
       "problem": {
         "name": "Problem"
-      },
-      "clean_water_tank_installed": {
-        "name": "Clean water tank inserted"
       },
       "waste_tank_installed": {
         "name": "Waste water tank inserted"
@@ -265,6 +261,27 @@
       },
       "err_repm": {
         "name": "Fault: Refill pump malfunction"
+      },
+      "waste_tank_full": {
+        "name": "Waste water tank full",
+        "state": {
+          "on": "Full – please empty",
+          "off": "OK"
+        }
+      },
+      "clean_water_low": {
+        "name": "Clean water low",
+        "state": {
+          "on": "Low – please refill",
+          "off": "OK"
+        }
+      },
+      "clean_water_empty": {
+        "name": "Clean water tank empty",
+        "state": {
+          "on": "Empty",
+          "off": "OK"
+        }
       }
     },
     "switch": {
