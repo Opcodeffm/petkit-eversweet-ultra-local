@@ -35,6 +35,7 @@
           "pet_name": "Pet name(s), comma-separated",
           "message_language": "Language of drink messages",
           "only_known": "Only count drinks recognized by face",
+          "drink_merge_minutes": "Combine drinking breaks up to (minutes)",
           "clips": "Receive clips from the fountain",
           "retention_days": "Keep drink clips (days)",
           "retention_other_days": "Keep other clips (days)",
@@ -42,6 +43,7 @@
         },
         "data_description": {
           "only_known": "Off (recommended): every drink counts unless someone is handling the fountain (tray or tank out/in, button on the device). With a single pet, every drink is attributed to it. On: only drinks where the fountain recognized the face.",
+          "drink_merge_minutes": "If the pet drinks, walks off briefly and drinks again, that counts as one drink. 0 = every sip on its own.",
           "retention_other_days": "Pet visits without drinking, removed drinks, flushing and water changes.",
           "max_storage_gb": "Above this, the oldest other clips are deleted first, then the oldest drink clips."
         }

@@ -16,12 +16,12 @@ const TEXT = {
   de: {
     today: "Heute", yesterday: "Gestern", times: "×", noClip: "Noch kein Clip",
     noDrinks: "Noch keine Trinkvorgänge", waiting: "Clip wird noch übertragen …",
-    missing: "Entität nicht gefunden",
+    missing: "Entität nicht gefunden", rounds: "Runden",
   },
   en: {
     today: "Today", yesterday: "Yesterday", times: "×", noClip: "No clip yet",
     noDrinks: "No drinks yet", waiting: "Clip is still uploading …",
-    missing: "Entity not found",
+    missing: "Entity not found", rounds: "rounds",
   },
 };
 
@@ -144,7 +144,8 @@ class PetkitDrinkCard extends HTMLElement {
       li.innerHTML = `<ha-icon icon="${d.clip ? "mdi:play-circle" : "mdi:cup-water"}"></ha-icon>
         <div><div class="who"></div><div class="when"></div></div><div class="dur"></div>`;
       li.querySelector(".who").textContent = d.pet || "";
-      li.querySelector(".when").textContent = this._when(d.start);
+      // Zusammengefasster Trinkvorgang (kurz weg, dann weitergetrunken)
+      li.querySelector(".when").textContent = this._when(d.start) + (d.parts > 1 ? ` · ${d.parts} ${t.rounds}` : "");
       li.querySelector(".dur").textContent = this._dur(d.duration);
       if (d.clip) {
         li.addEventListener("click", () => {

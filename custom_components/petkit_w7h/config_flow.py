@@ -17,6 +17,7 @@ from .const import (
     CONF_CLIPS,
     CONF_DEVICE_ID,
     CONF_DEVICE_SECRET,
+    CONF_DRINK_MERGE_MIN,
     CONF_MAX_STORAGE_GB,
     CONF_MESSAGE_LANGUAGE,
     CONF_ONLY_KNOWN,
@@ -25,6 +26,7 @@ from .const import (
     CONF_PUBLIC_HOST,
     CONF_RETENTION_DAYS,
     CONF_RETENTION_OTHER_DAYS,
+    DEFAULT_DRINK_MERGE_MIN,
     DEFAULT_MAX_STORAGE_GB,
     DEFAULT_PET_NAME,
     DEFAULT_PET_NAME_EN,
@@ -112,6 +114,8 @@ class W7HOptionsFlow(OptionsFlow):
                 SelectSelector(SelectSelectorConfig(options=["de", "en"], mode=SelectSelectorMode.DROPDOWN,
                                                     translation_key=CONF_MESSAGE_LANGUAGE)),
             vol.Required(CONF_ONLY_KNOWN, default=opts.get(CONF_ONLY_KNOWN, False)): bool,
+            vol.Required(CONF_DRINK_MERGE_MIN, default=opts.get(CONF_DRINK_MERGE_MIN, DEFAULT_DRINK_MERGE_MIN)):
+                vol.All(vol.Coerce(int), vol.Range(min=0, max=60)),
             vol.Required(CONF_CLIPS, default=opts.get(CONF_CLIPS, True)): bool,
             vol.Required(CONF_RETENTION_DAYS, default=opts.get(CONF_RETENTION_DAYS, DEFAULT_RETENTION_DAYS)):
                 vol.All(vol.Coerce(int), vol.Range(min=1, max=365)),

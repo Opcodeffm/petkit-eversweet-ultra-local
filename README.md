@@ -109,6 +109,7 @@ every drink is attributed to it even when the face is not recognized.
 | Pet name(s) | Cat / Katze | comma-separated, one folder per name for the photos |
 | Language of drink messages | from HA | German or English |
 | Only count drinks recognized by face | off | otherwise every drink counts unless someone was handling the fountain |
+| Combine drinking breaks up to | 10 min | pet drinks, walks off briefly, drinks again = one drink (0 = off) |
 | Receive clips | on | store videos and snapshots |
 | Keep drink clips | 30 days | clips that belong to a counted drink |
 | Keep other clips | 3 days | pet visits without drinking, flushing, water changes, removed drinks |
@@ -132,8 +133,9 @@ script yet.
 - `petkit_w7h.ignore_drink`: remove drinks from statistics (or count them again).
 - `petkit_w7h.invoke` / `petkit_w7h.set_settings`: raw actions and settings (advanced).
 
-A drink is counted about one minute after it ends, after checking that nobody was
-handling the fountain at that time.
+A drink shows up about one minute after it ends, after checking that nobody was
+handling the fountain. Short breaks are combined: the `petkit_w7h_drink` event fires once
+per drink, when no further round followed within the break time (default 10 minutes).
 
 ## How it works
 

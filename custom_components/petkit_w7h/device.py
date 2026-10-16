@@ -115,6 +115,8 @@ class W7HDevice:
         self.pet_name = DEFAULT_PET_NAME
         self.message_language = "de"
         self.only_known = False
+        # Trinkt das Tier, geht kurz weg und trinkt weiter, ist das ein Trinkvorgang (0 = aus)
+        self.merge_gap_s = 0
         self.pets: Any = None  # W7HPets, setzt __init__
         self.last_seen: float | None = None
 
@@ -354,7 +356,7 @@ class W7HDevice:
         if self._finalize_cancel:
             self._finalize_cancel()
             self._finalize_cancel = None
-        due = [d["pending"] for d in self.drinks if d.get("pending")]
+        due = [d[k] for d in self.drinks for k in ("pending", "announce") if d.get(k)]
         if due:
             delay = max(1.0, min(due) - time.time())
             self._finalize_cancel = async_call_later(self.hass, delay, self._async_finalize_due)
@@ -366,6 +368,15 @@ class W7HDevice:
         for drink in self.drinks:
             if drink.get("pending") and drink["pending"] <= now:
                 self._finalize_drink(drink)
+        # Läuft gerade noch eine Runde (Trinken oder Prüfung), mit der Meldung warten
+        busy = self.drinking or any(d.get("pending") for d in self.drinks)
+        for drink in self.drinks:
+            if drink.get("announce") and drink["announce"] <= now:
+                if busy:
+                    drink["announce"] = int(now) + 60
+                    continue
+                drink.pop("announce")
+                self._announce_session(drink)
         self._schedule_save()
         self._notify()
         self._schedule_finalize()
@@ -379,22 +390,42 @@ class W7HDevice:
             drink["handling"] = why
             _LOGGER.info("Trinkvorgang %s ignoriert: am Brunnen wurde hantiert (%s)", drink.get("id"), why)
             return
-        self._fire_drink("drink", drink)
-        media = self.media_for_drink(drink)
+        # Sensoren zeigen ihn sofort. Gemeldet wird erst, wenn keine weitere Runde mehr folgt.
+        drink["announce"] = int(time.time()) + self.merge_gap_s
+
+    def _announce_session(self, drink: dict[str, Any]) -> None:
+        """Runde vorbei: Ereignis für den ganzen Trinkvorgang (alle Runden zusammen)."""
+        session = self._session_for(drink.get("id"))
+        if not session or session["parts"][-1] != drink.get("id"):
+            return  # es kam noch eine Runde, die meldet sich selbst
+        first = next((d for d in self.drinks if d.get("id") == session["id"]), None)
+        if first is not None:
+            first["announced"] = True
+        self._fire_drink("drink", session)
+        media = self.media_for_drink(session)
         if media.get("full") or media.get("video"):
-            self._fire_drink("clip_ready", drink)
+            self._fire_drink("clip_ready", session)
 
     @callback
     def async_ignore_drinks(self, event_ids: list[str], ignore: bool = True) -> int:
-        """Trinkvorgänge von Hand aussortieren (oder wieder zulassen)."""
+        """Trinkvorgänge von Hand aussortieren (oder wieder zulassen). Eine zusammengefasste
+        ID (erste Runde) gilt für alle Runden dieses Trinkvorgangs."""
+        owner: dict[str, str] = {i: i for i in event_ids}
+        if ignore:
+            for session in self.drink_sessions():
+                if session["id"] in owner:
+                    owner.update({part: session["id"] for part in session["parts"]})
+        else:
+            owner.update({d["id"]: d["ignored_with"] for d in self.drinks if d.get("ignored_with") in event_ids})
         count = 0
         for drink in self.drinks:
-            if drink.get("id") in event_ids:
+            if drink.get("id") in owner:
                 if ignore:
                     drink["ignored"] = "manual"
+                    drink["ignored_with"] = owner[drink["id"]]
                 else:
-                    drink.pop("ignored", None)
-                    drink.pop("handling", None)
+                    for key in ("ignored", "handling", "ignored_with"):
+                        drink.pop(key, None)
                 count += 1
         if count:
             self._schedule_save()
@@ -475,12 +506,35 @@ class W7HDevice:
             return f"Unbekanntes Tier hat {dur} getrunken" if german else f"Unknown pet drank for {dur}"
         return f"{pet} hat {dur} getrunken" if german else f"{pet} drank for {dur}"
 
+    def drink_sessions(self) -> list[dict[str, Any]]:
+        """Gezählte Trinkvorgänge, kurze Pausen zusammengefasst: Amber trinkt, geht ein paar Meter
+        weg oder setzt sich neben den Brunnen und trinkt dann weiter. Der Brunnen meldet das als zwei
+        Vorgänge. Die Rohdaten bleiben, zusammengefasst wird nur für Anzeige und Ereignisse."""
+        sessions: list[dict[str, Any]] = []
+        raw = sorted((d for d in self.drinks if not d.get("ignored") and not d.get("pending")),
+                     key=lambda d: d.get("start") or 0)
+        for d in raw:
+            last = sessions[-1] if sessions else None
+            pet = d.get("pet_id")
+            if (last and self.merge_gap_s
+                    and (d.get("start") or 0) - (last["end"] or last["start"] or 0) <= self.merge_gap_s
+                    and (not pet or not last["pet_id"] or pet == last["pet_id"])):  # zwei Tiere nicht mischen
+                last["end"] = max(last["end"] or 0, d.get("end") or 0)
+                last["duration"] += d.get("duration") or 0
+                last["parts"].append(d["id"])
+                last["pet_id"] = last["pet_id"] or pet
+            else:
+                sessions.append({"id": d["id"], "start": d.get("start"), "end": d.get("end"),
+                                 "duration": d.get("duration") or 0, "pet_id": pet, "parts": [d["id"]]})
+        return sessions
+
+    def _session_for(self, drink_id: str | None) -> dict[str, Any] | None:
+        return next((s for s in self.drink_sessions() if drink_id in s["parts"]), None)
+
     def visible_drinks(self) -> list[dict[str, Any]]:
-        """Trinkvorgänge für Sensoren und Karte: ohne aussortierte und noch offene,
+        """Trinkvorgänge für Sensoren und Karte: zusammengefasst, ohne aussortierte und noch offene,
         auf Wunsch nur die per Gesicht erkannten."""
-        return [d for d in self.drinks
-                if not d.get("ignored") and not d.get("pending")
-                and (not self.only_known or self.is_recognized(d))]
+        return [s for s in self.drink_sessions() if not self.only_known or self.is_recognized(s)]
 
     def media_url(self, rel: str | None, version: int | None = None) -> str | None:
         if not rel:
@@ -522,6 +576,7 @@ class W7HDevice:
             "known": self.is_known(drink),
             "recognized": self.is_recognized(drink),
             "message": self.drink_message(drink),
+            "parts": len(drink.get("parts") or [drink.get("id")]),
             "clip": self.media_url(clip, media.get(f"{clip_kind}_v")),
             "thumb": self.media_url(media.get("thumb"), media.get("thumb_v")),
         }
@@ -553,14 +608,17 @@ class W7HDevice:
             return
         drink = next((d for d in reversed(self.drinks[-50:])
                       if d.get("id") == event_id or self.media_for_drink(d) is entry), None)
+        session = self._session_for(drink.get("id")) if drink else None
+        if session and session["id"] != drink.get("id"):
+            session = None  # Clip einer späteren Runde: Der Trinkvorgang zeigt den Clip der ersten
         payload = {"event_id": event_id, "kind": kind, "url": self.media_url(rel),
                    # für Benachrichtigungen der Companion-App (lokale Medienquelle)
                    "media_path": f"/media/local/{MEDIA_SUBDIR}/{rel}"}
-        if drink:
-            payload.update(self.drink_view(drink))
+        if session:
+            payload.update(self.drink_view(session))
         self.hass.bus.async_fire(EVENT_CLIP, payload)
-        if drink:
-            self._fire_drink("clip_ready", drink)
+        if session and drink.get("announced"):
+            self._fire_drink("clip_ready", session)
 
     @callback
     def async_media_removed(self, rels: set[str]) -> None:
@@ -577,7 +635,7 @@ class W7HDevice:
         self._notify()
 
     def _fire_drink(self, kind: str, drink: dict[str, Any]) -> None:
-        if drink.get("ignored") or drink.get("pending") or (self.only_known and not self.is_recognized(drink)):
+        if self.only_known and not self.is_recognized(drink):
             return
         view = self.drink_view(drink)
         if kind == "drink":

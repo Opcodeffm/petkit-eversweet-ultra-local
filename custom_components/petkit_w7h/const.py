@@ -15,9 +15,12 @@ CONF_RETENTION_OTHER_DAYS = "retention_other_days"  # alle übrigen Clips (Besuc
 CONF_MAX_STORAGE_GB = "max_storage_gb"              # Obergrenze für alle Clips zusammen
 CONF_MESSAGE_LANGUAGE = "message_language"  # Sprache der Sätze wie "Luna hat 55 Sekunden getrunken"
 CONF_ONLY_KNOWN = "only_known"  # nur Trinkvorgänge erkannter Tiere zählen/zeigen
+CONF_DRINK_MERGE_MIN = "drink_merge_minutes"  # kurze Trinkpausen zu einem Trinkvorgang zusammenfassen
 DEFAULT_PET_NAME = "Katze"  # Deutsch; sonst DEFAULT_PET_NAME_EN
 DEFAULT_PET_NAME_EN = "Cat"
 DEFAULT_RETENTION_DAYS = 30
+# Gemessen: Pausen innerhalb einer Runde bis 8,5 min, zwischen Besuchen ab 20 min
+DEFAULT_DRINK_MERGE_MIN = 10
 DEFAULT_RETENTION_OTHER_DAYS = 3
 DEFAULT_MAX_STORAGE_GB = 5
 

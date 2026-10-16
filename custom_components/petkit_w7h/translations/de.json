@@ -35,6 +35,7 @@
           "pet_name": "Name(n) deiner Tiere, mit Komma getrennt",
           "message_language": "Sprache der Trink-Meldungen",
           "only_known": "Nur per Gesicht erkannte Trinkvorgänge zählen",
+          "drink_merge_minutes": "Trinkpausen zusammenfassen bis (Minuten)",
           "clips": "Clips vom Brunnen empfangen",
           "retention_days": "Clips von Trinkvorgängen aufbewahren (Tage)",
           "retention_other_days": "Übrige Clips aufbewahren (Tage)",
@@ -42,6 +43,7 @@
         },
         "data_description": {
           "only_known": "Aus (empfohlen): Jeder Trinkvorgang zählt, außer jemand hantiert gerade am Brunnen (Schale oder Tank raus/rein, Taste am Gerät). Bei nur einem Tier gehört ihm jeder Trinkvorgang. An: nur wenn der Brunnen das Gesicht erkannt hat.",
+          "drink_merge_minutes": "Trinkt das Tier, geht kurz weg und trinkt weiter, zählt das als ein Trinkvorgang. 0 = jede Runde einzeln.",
           "retention_other_days": "Besuche ohne Trinken, aussortierte Trinkvorgänge, Spülen und Wasserwechsel.",
           "max_storage_gb": "Wird es mehr, gehen zuerst die ältesten übrigen Clips, dann die ältesten Trinkvorgänge."
         }

@@ -22,6 +22,7 @@ from .const import (
     CONF_CLIPS,
     CONF_DEVICE_ID,
     CONF_DEVICE_SECRET,
+    CONF_DRINK_MERGE_MIN,
     CONF_MESSAGE_LANGUAGE,
     CONF_MAX_STORAGE_GB,
     CONF_ONLY_KNOWN,
@@ -30,6 +31,7 @@ from .const import (
     CONF_PUBLIC_HOST,
     CONF_RETENTION_DAYS,
     CONF_RETENTION_OTHER_DAYS,
+    DEFAULT_DRINK_MERGE_MIN,
     DEFAULT_MAX_STORAGE_GB,
     DEFAULT_RETENTION_DAYS,
     DEFAULT_RETENTION_OTHER_DAYS,
@@ -76,6 +78,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: W7HConfigEntry) -> bool:
     names = split_names(options.get(CONF_PET_NAME)) or [default_pet_name(device.message_language)]
     device.pet_name = names[0]
     device.only_known = bool(options.get(CONF_ONLY_KNOWN, False))
+    device.merge_gap_s = int(options.get(CONF_DRINK_MERGE_MIN, DEFAULT_DRINK_MERGE_MIN)) * 60
 
     base = f"http://{data[CONF_PUBLIC_HOST]}:{data[CONF_PORT]}"
     media = W7HMedia(hass, device, base)
