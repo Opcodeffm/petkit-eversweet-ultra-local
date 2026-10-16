@@ -44,6 +44,36 @@
 - **Control:** refill, drain, drain & flush, deep clean, flow mode, schedules, quiet
   hours, lights, camera, detection settings and more (over 100 entities).
 
+## Screenshots
+
+<p align="center">
+  <img src="docs/images/card.png" width="420" alt="Dashboard card with the clip of the latest drink and a list of today's drinks"><br>
+  <sub><em>Dashboard card: clip of the latest drink, today's total and the latest drinks.<br>
+  Short breaks are combined into one drink ("2 rounds").</em></sub>
+</p>
+
+<br>
+
+<table align="center">
+  <tr>
+    <td align="center" width="50%">
+      <img src="docs/images/device.png" width="400" alt="Device page with controls and sensors"><br>
+      <sub><em>Device page: controls, tank and error status in plain text, drink sensors.</em></sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="docs/images/options.png" width="340" alt="Options dialog"><br>
+      <sub><em>Options: pet names, message language, break merging, clip retention and storage limit.</em></sub>
+    </td>
+  </tr>
+</table>
+
+<br>
+
+<p align="center">
+  <img src="docs/images/integration.png" width="720" alt="Integration page with the Petkit Local icon"><br>
+  <sub><em>Shows up as its own integration with the Petkit Local icon.</em></sub>
+</p>
+
 ## Requirements
 
 - Eversweet Ultra (W7H), set up once with the Petkit app so it is on your Wi-Fi.

@@ -30,16 +30,16 @@
     "step": {
       "init": {
         "title": "Optionen",
-        "description": "Tiererkennung: 3–6 Fotos vom Gesicht jedes Tiers (frontal, formatfüllend) nach Medien › Meine Medien › petkit_w7h › pets › <Name> hochladen. Sie werden quadratisch zugeschnitten und spätestens nach 10 Minuten an den Brunnen gegeben.",
+        "description": "Tiererkennung: 3–6 Fotos vom Gesicht jedes Tiers (frontal, formatfüllend) nach Medien › Meine Medien › petkit_w7h › pets › (Name des Tiers) hochladen. Sie werden quadratisch zugeschnitten und spätestens nach 10 Minuten an den Brunnen gegeben.",
         "data": {
           "pet_name": "Name(n) deiner Tiere, mit Komma getrennt",
           "message_language": "Sprache der Trink-Meldungen",
           "only_known": "Nur per Gesicht erkannte Trinkvorgänge zählen",
-          "drink_merge_minutes": "Trinkpausen zusammenfassen bis (Minuten)",
+          "drink_merge_minutes": "Trinkpausen bis zu dieser Länge zusammenfassen",
           "clips": "Clips vom Brunnen empfangen",
-          "retention_days": "Clips von Trinkvorgängen aufbewahren (Tage)",
-          "retention_other_days": "Übrige Clips aufbewahren (Tage)",
-          "max_storage_gb": "Höchstens so viel Speicher für alle Clips (GB)"
+          "retention_days": "Clips von Trinkvorgängen aufbewahren",
+          "retention_other_days": "Übrige Clips aufbewahren",
+          "max_storage_gb": "Höchstens so viel Speicher für alle Clips"
         },
         "data_description": {
           "only_known": "Aus (empfohlen): Jeder Trinkvorgang zählt, außer jemand hantiert gerade am Brunnen (Schale oder Tank raus/rein, Taste am Gerät). Bei nur einem Tier gehört ihm jeder Trinkvorgang. An: nur wenn der Brunnen das Gesicht erkannt hat.",

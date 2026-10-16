@@ -11,7 +11,14 @@ import voluptuous as vol
 from homeassistant.components import network
 from homeassistant.config_entries import ConfigEntry, ConfigFlow, ConfigFlowResult, OptionsFlow
 from homeassistant.core import HomeAssistant, callback
-from homeassistant.helpers.selector import SelectSelector, SelectSelectorConfig, SelectSelectorMode
+from homeassistant.helpers.selector import (
+    NumberSelector,
+    NumberSelectorConfig,
+    NumberSelectorMode,
+    SelectSelector,
+    SelectSelectorConfig,
+    SelectSelectorMode,
+)
 
 from .const import (
     CONF_CLIPS,
@@ -42,6 +49,12 @@ DEVICE_FILE = "petkit_w7h_device.json"
 
 def default_pet_name(language: str) -> str:
     return DEFAULT_PET_NAME if language == "de" else DEFAULT_PET_NAME_EN
+
+
+def _number(low: int, high: int, unit: str) -> NumberSelector:
+    """Eingabefeld statt Schieberegler (beim Regler überdeckt das Label die Skala)."""
+    return NumberSelector(NumberSelectorConfig(min=low, max=high, step=1, mode=NumberSelectorMode.BOX,
+                                               unit_of_measurement=unit))
 
 
 def default_message_language(hass: HomeAssistant) -> str:
@@ -104,7 +117,9 @@ class W7HOptionsFlow(OptionsFlow):
 
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         if user_input is not None:
-            return self.async_create_entry(data=user_input)
+            # Zahlenfelder liefern float (10.0); als int speichern
+            numbers = (CONF_DRINK_MERGE_MIN, CONF_RETENTION_DAYS, CONF_RETENTION_OTHER_DAYS, CONF_MAX_STORAGE_GB)
+            return self.async_create_entry(data={k: int(v) if k in numbers else v for k, v in user_input.items()})
         opts = self.config_entry.options
         schema = vol.Schema({
             vol.Required(CONF_PET_NAME, default=opts.get(CONF_PET_NAME, default_pet_name(
@@ -115,14 +130,14 @@ class W7HOptionsFlow(OptionsFlow):
                                                     translation_key=CONF_MESSAGE_LANGUAGE)),
             vol.Required(CONF_ONLY_KNOWN, default=opts.get(CONF_ONLY_KNOWN, False)): bool,
             vol.Required(CONF_DRINK_MERGE_MIN, default=opts.get(CONF_DRINK_MERGE_MIN, DEFAULT_DRINK_MERGE_MIN)):
-                vol.All(vol.Coerce(int), vol.Range(min=0, max=60)),
+                _number(0, 60, "min"),
             vol.Required(CONF_CLIPS, default=opts.get(CONF_CLIPS, True)): bool,
             vol.Required(CONF_RETENTION_DAYS, default=opts.get(CONF_RETENTION_DAYS, DEFAULT_RETENTION_DAYS)):
-                vol.All(vol.Coerce(int), vol.Range(min=1, max=365)),
+                _number(1, 365, "d"),
             vol.Required(CONF_RETENTION_OTHER_DAYS,
                          default=opts.get(CONF_RETENTION_OTHER_DAYS, DEFAULT_RETENTION_OTHER_DAYS)):
-                vol.All(vol.Coerce(int), vol.Range(min=1, max=365)),
+                _number(1, 365, "d"),
             vol.Required(CONF_MAX_STORAGE_GB, default=opts.get(CONF_MAX_STORAGE_GB, DEFAULT_MAX_STORAGE_GB)):
-                vol.All(vol.Coerce(int), vol.Range(min=1, max=500)),
+                _number(1, 500, "GB"),
         })
         return self.async_show_form(step_id="init", data_schema=schema)

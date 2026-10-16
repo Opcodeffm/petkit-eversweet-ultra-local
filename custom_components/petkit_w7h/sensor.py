@@ -96,7 +96,7 @@ SENSORS: tuple[W7HSensorDescription, ...] = (
         value_fn=lambda d: d.recognized_label(d.local.get("last_pet_id")) if d.local.get("last_pet_id") is not None else None,
     ),
     W7HSensorDescription(
-        key="last_drink_duration", native_unit_of_measurement=UnitOfTime.SECONDS,
+        key="last_drink_duration", native_unit_of_measurement=UnitOfTime.SECONDS, suggested_display_precision=0,
         device_class=SensorDeviceClass.DURATION, value_fn=lambda d: (d.last_drink or {}).get("duration"),
         icon="mdi:cup-water",
     ),
@@ -124,15 +124,15 @@ SENSORS: tuple[W7HSensorDescription, ...] = (
         value_fn=lambda d: state_value(d, "heatRealTemp"), needs_heater=True,
     ),
     W7HSensorDescription(
-        key="heat_left_time", native_unit_of_measurement=UnitOfTime.SECONDS,
+        key="heat_left_time", native_unit_of_measurement=UnitOfTime.SECONDS, suggested_display_precision=0,
         device_class=SensorDeviceClass.DURATION, value_fn=lambda d: state_value(d, "heatLeftTime"), needs_heater=True,
     ),
     W7HSensorDescription(
-        key="heat_status_time", native_unit_of_measurement=UnitOfTime.SECONDS,
+        key="heat_status_time", native_unit_of_measurement=UnitOfTime.SECONDS, suggested_display_precision=0,
         device_class=SensorDeviceClass.DURATION, value_fn=lambda d: state_value(d, "heatStatusTime"), needs_heater=True,
     ),
     W7HSensorDescription(
-        key="disinfect_time", native_unit_of_measurement=UnitOfTime.SECONDS,
+        key="disinfect_time", native_unit_of_measurement=UnitOfTime.SECONDS, suggested_display_precision=0,
         device_class=SensorDeviceClass.DURATION, value_fn=lambda d: state_value(d, "disinfectTime"),
     ),
     # Diagnose
@@ -148,7 +148,8 @@ SENSORS: tuple[W7HSensorDescription, ...] = (
         entity_registry_enabled_default=False,
     ),
     W7HSensorDescription(
-        key="runtime", native_unit_of_measurement=UnitOfTime.SECONDS, device_class=SensorDeviceClass.DURATION,
+        key="runtime", native_unit_of_measurement=UnitOfTime.SECONDS, suggested_display_precision=0,
+        device_class=SensorDeviceClass.DURATION,
         entity_category=EntityCategory.DIAGNOSTIC, value_fn=lambda d: state_value(d, "runtime"),
         entity_registry_enabled_default=False,
     ),
