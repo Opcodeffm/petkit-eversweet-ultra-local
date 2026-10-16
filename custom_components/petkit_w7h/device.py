@@ -507,7 +507,7 @@ class W7HDevice:
         return f"{pet} hat {dur} getrunken" if german else f"{pet} drank for {dur}"
 
     def drink_sessions(self) -> list[dict[str, Any]]:
-        """Gezählte Trinkvorgänge, kurze Pausen zusammengefasst: Amber trinkt, geht ein paar Meter
+        """Gezählte Trinkvorgänge, kurze Pausen zusammengefasst: Das Tier trinkt, geht ein paar Meter
         weg oder setzt sich neben den Brunnen und trinkt dann weiter. Der Brunnen meldet das als zwei
         Vorgänge. Die Rohdaten bleiben, zusammengefasst wird nur für Anzeige und Ereignisse."""
         sessions: list[dict[str, Any]] = []
