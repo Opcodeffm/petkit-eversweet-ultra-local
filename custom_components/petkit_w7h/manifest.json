@@ -1,6 +1,6 @@
 {
   "domain": "petkit_w7h",
-  "name": "Petkit Eversweet Ultra (lokal)",
+  "name": "Petkit Eversweet Ultra Local",
   "codeowners": [
     "@Opcodeffm"
   ],
@@ -11,11 +11,11 @@
     "http",
     "network"
   ],
-  "documentation": "https://github.com/Opcodeffm/petkit-w7h-local",
+  "documentation": "https://github.com/Opcodeffm/petkit-eversweet-ultra-local",
   "iot_class": "local_push",
   "requirements": [],
   "version": "0.4.6",
   "integration_type": "device",
   "single_config_entry": true,
-  "issue_tracker": "https://github.com/Opcodeffm/petkit-w7h-local/issues"
+  "issue_tracker": "https://github.com/Opcodeffm/petkit-eversweet-ultra-local/issues"
 }

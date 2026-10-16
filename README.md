@@ -1,9 +1,25 @@
-# Petkit Eversweet Ultra (W7H) – local Home Assistant integration
+<p align="center">
+  <img src="docs/logos/banner-wide.png" alt="Petkit Eversweet Ultra Local: the Eversweet Ultra (W7H) camera fountain with Home Assistant, no cloud">
+</p>
 
-Run the PETKIT Eversweet Ultra camera fountain (model W7H) fully locally with Home
-Assistant. No Petkit cloud, no MQTT broker, no firmware patches: the fountain talks
-plain HTTP to a small server inside this integration.
+<h1 align="center">Petkit Eversweet Ultra Local</h1>
 
+<p align="center">
+  <em>Run the PETKIT Eversweet Ultra camera fountain (model W7H) fully locally with Home Assistant.<br>
+  No Petkit cloud, no MQTT broker, no firmware patches: the fountain talks plain HTTP<br>
+  to a small server inside this integration.</em>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/status-working-brightgreen">
+  <img src="https://img.shields.io/badge/HA-2025.3%2B-41BDF5?logo=home-assistant&logoColor=white">
+  <img src="https://img.shields.io/badge/license-MIT-blue">
+  <img src="https://img.shields.io/badge/cloud-free-success">
+</p>
+
+> Part of the Petkit Local family. For the Fresh Element Solo (D4) feeder and the
+> Eversweet Max 2 Cordless (CTW3) fountain see [petkit-local](https://github.com/Opcodeffm/petkit-local).
+>
 > Not affiliated with PETKIT. Use at your own risk. Tested with one fountain on
 > firmware 456 and Home Assistant 2026.10.
 
